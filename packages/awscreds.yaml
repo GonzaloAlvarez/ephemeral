@@ -1,0 +1,17 @@
+---
+package:
+  name: 'AWS Credentials'
+  description: 'Retrieve AWS Credentials using Cognito'
+  version: '0.0.1'
+  vars:
+    - awscreds_uri: 'https://github.com/GonzaloAlvarez/AwsCred'
+    - awscreds_path: '{{ epherstore_path }}/awscreds'
+    - awscreds_file: '{{ epherstore_path }}/awscreds.json'
+  setup:
+    dependencies:
+      - name: 'boto'
+        command: '{{ pip }} install boto3'
+  run:
+    execution:
+      - command: '{{ eph }} git clone {{ awscreds_uri }} {{ awscreds_path }}'
+      - command: '{{ python }} {{ awscreds_path }}/awscreds.py {{ awscreds_file }}'

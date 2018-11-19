@@ -1,5 +1,21 @@
-#!/usr/bin/env python
-from __future__ import (print_function)
+# (c) 2012, Michael DeHaan <michael.dehaan@gmail.com>
+#
+# This file is part of Ansible
+#
+# Ansible is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Ansible is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import os
@@ -8,13 +24,13 @@ import shlex
 import subprocess
 import sys
 
-from pylib.util.six import PY2, PY3
-from pylib.util.text import to_bytes
+from ansible.module_utils.six import PY2, PY3
+from ansible.module_utils._text import to_bytes
 
 
-def run_cmd(context, cmd):
+def run_cmd(cmd, live=False, readsize=10):
 
-    readsize = 10
+    # readsize = 10
 
     # On python2, shlex needs byte strings
     if PY2:
@@ -25,11 +41,7 @@ def run_cmd(context, cmd):
     # passed byte strtings)
     cmdargs = [to_bytes(a, errors='surrogate_or_strict') for a in cmdargs]
 
-    environment = []
-    if hasattr(context.session, 'env'):
-        environment = context.session.env
-
-    p = subprocess.Popen(cmdargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment)
+    p = subprocess.Popen(cmdargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     stdout = b''
     stderr = b''
@@ -39,7 +51,7 @@ def run_cmd(context, cmd):
 
         if p.stdout in rfd:
             dat = os.read(p.stdout.fileno(), readsize)
-            if hasattr(context.session, 'verbose') and context.session.verbose:
+            if live:
                 # On python3, stdout has a codec to go from text type to bytes
                 if PY3:
                     sys.stdout.buffer.write(dat)
@@ -51,7 +63,7 @@ def run_cmd(context, cmd):
         if p.stderr in rfd:
             dat = os.read(p.stderr.fileno(), readsize)
             stderr += dat
-            if hasattr(context.session, 'verbose') and context.session.verbose:
+            if live:
                 # On python3, stdout has a codec to go from text type to bytes
                 if PY3:
                     sys.stdout.buffer.write(dat)
@@ -68,27 +80,3 @@ def run_cmd(context, cmd):
             p.wait()
 
     return p.returncode, stdout, stderr
-
-def run_command(*popenargs, **kwargs):
-    if "check_output" in dir(subprocess):
-        try:
-            out = subprocess.check_output(*popenargs, **kwargs)
-            print(out)
-            return out
-        except Exception as e:
-            print(e.output)
-        return ""
-    else:
-        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            cmd = kwargs.get("args")
-            if cmd is None:
-                cmd = popenargs[0]
-            raise subprocess.CalledProcessError(retcode, cmd)
-        return output
-
-def self_relaunch(py_interpreter):
-    os.execl(py_interpreter, py_interpreter, *sys.argv)
-

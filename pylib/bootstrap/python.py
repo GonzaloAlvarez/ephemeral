@@ -46,6 +46,11 @@ def init_python(context):
     pip_install(context, 'ruamel.yaml[jinja2]')
     pip_install(context, 'jinja2')
 
+def init_env(context):
+    context.session.env = {}
+    context.session.env['PATH'] = os.path.dirname(context.config.python_path)
+    context.session.env['PYTHONPATH'] = context.config.python_lib
+
 def init_virtualenv(context):
     if not hasattr(sys, 'real_prefix'):
         if not 'python_path' in context.config.__dict__:
@@ -62,3 +67,4 @@ def init_virtualenv(context):
         python_lib_options = [k for k in sys.path if context.epherstore.get_store_path() in k and 'site-packages' in k]
         context.config.python_lib = [k for k in sys.path if context.epherstore.get_store_path() in k and 'site-packages' in k][0]
 
+    init_env(context)

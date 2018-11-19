@@ -5,8 +5,12 @@ package:
   version: '0.0.1'
   setup:
     dependencies:
+      - name: 'certifi'
+        command: '{{ pip }} install certifi'
+      - name: 'urllib3'
+        command: '{{ pip }} install urllib3'
       - name: 'dulwich'
-        command: '{{ pip }} install -v dulwich'
+        command: '{{ pip }} install -v -v -v dulwich --global-option --pure'
   run:
     execution:
       - command: '{{ python }} {{ bin }}/dulwich {{ args|join(' ') }}'

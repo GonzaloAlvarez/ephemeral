@@ -14,6 +14,7 @@ def main():
 
     climanager = CommandLineManager()
     cli = context.session.cli = climanager.get_args()
+    context.session.verbose = True
     if cli.command:
         cli.command(context)
 

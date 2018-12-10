@@ -21,6 +21,7 @@ def build_subparsers(subparser):
     setup_parser = subparser.add_parser('setup', help='setup command')
     setup_parser.add_argument('package')
     setup_parser.set_defaults(command=setup)
+    setup_parser.add_argument('args', nargs=argparse.REMAINDER)
 
     pyinfo_parser = subparser.add_parser('pyinfo')
     pyinfo_parser.set_defaults(command=pyinfo)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import logging
 import ssl
 import json
 
@@ -24,7 +25,9 @@ def ssl_protocols():
 
 
 def pyinfo(context):
+    ssl_protocols_object = ssl_protocols()
+    logging.debug('Capabilities for python executable [{}]: {}'.format(sys.executable, ssl_protocols_object))
     print(json.dumps({
         'executable': sys.executable,
         'version_major': sys.version_info[0],
-        'ssl_protocols': ssl_protocols()}))
+        'ssl_protocols': ssl_protocols_object}))

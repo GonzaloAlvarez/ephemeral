@@ -1,15 +1,18 @@
 #!/usr/bin/env python
-import sys
 import os
-import json
-import site
+import logging
 
-from pylib.cli import CommandLineManager
+from pylib.epher import CommandLineManager
 from pylib.epher import EphemeralStoreManager 
 from pylib.epher import ContextManager
+from pylib.epher import configure_logging
+
+LOGGING_FILE = 'epher.log'
 
 def main():
     epherstore = EphemeralStoreManager()
+    configure_logging(os.path.join(epherstore.get_store_path(), LOGGING_FILE))
+    logging.info('Starting up Ephemeral')
     context = ContextManager(epherstore)
 
     climanager = CommandLineManager()

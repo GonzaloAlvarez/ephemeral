@@ -12,7 +12,7 @@ def configure_logging(logfile):
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
 
-    fileHandler = logging.handlers.RotatingFileHandler(logfile, encoding='utf8', maxBytes=100000, backupCount=1)
+    fileHandler = logging.handlers.RotatingFileHandler(logfile, encoding='utf8', maxBytes=100000, backupCount=1, mode='a')
     fileHandler.setFormatter(fmtr)
     fileHandler.setLevel(logging.DEBUG)
     root_logger.addHandler(fileHandler)

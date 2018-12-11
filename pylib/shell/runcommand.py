@@ -12,6 +12,14 @@ import struct
 
 from pylib import pexpect
 
+try:
+    from CStringIO import StringIO 
+except ImportError:
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import BytesIO as StringIO
+
 # Include `unicode` in STR_TYPES for Python 2.X
 try:
     STR_TYPES = (str, unicode)
@@ -55,11 +63,14 @@ def run_pexpect(command, env):
         pexpect_kwargs = {"env": env}
         columns, lines = shutil.get_terminal_size()
         logging.debug("columns {} lines {}".format(columns, lines))
+        process_output = StringIO()
+        pexpect_kwargs["logfile"] = process_output
         child = pexpect.spawn(command, **pexpect_kwargs)
         global global_pexpect_instance
         global_pexpect_instance = child
         signal.signal(signal.SIGWINCH, sigwinch_passthrough)
         child.interact(chr(29))
+        return process_output.getvalue().decode('UTF-8')
     finally:
         signal.signal(signal.SIGWINCH, _original_signal)
 
@@ -74,9 +85,9 @@ def run_system(command, env):
         os.environ.update(_environ)
 
 class CommandExecutionMode():
-    SUBPROCESS = {"func": run_subprocess}
-    PEXPECT = {"func": run_pexpect}
-    SYSTEM = {"func": run_system}
+    SUBPROCESS = {"func": run_subprocess, "name": "subprocess"}
+    PEXPECT = {"func": run_pexpect, "name": "pexpect"}
+    SYSTEM = {"func": run_system, "name": "system"}
 
 def run(command, mode=CommandExecutionMode.PEXPECT):
     env = os.environ.copy()
@@ -85,6 +96,7 @@ def run(command, mode=CommandExecutionMode.PEXPECT):
     env["PYTHONUNBUFFERED"] = "1"
     env["TERM"] = "screen-256color"
 
+    logging.info('Executing [{}] as {} call'.format(command, mode["name"]))
     return mode["func"](command, env)
 
 def self_relaunch(py_interpreter):

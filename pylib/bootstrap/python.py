@@ -9,6 +9,7 @@ import pkg_resources
 from pylib.clint.textui import puts
 from pylib import shell
 from pylib import github
+import pylib.commands
 
 try:
     from types import SimpleNamespace as Namespace
@@ -92,3 +93,6 @@ def populate_context(context):
     context.func.pip_install = pip_install
     context.func.run = shell.run
     context.func.run_sys = lambda x: shell.run(x, shell.CommandExecutionMode.SYSTEM)
+    context.func.run_silent = lambda x: shell.run(x, shell.CommandExecutionMode.SUBPROCESS)
+    context.func.puts = puts
+    context.func.pkg_install = pylib.commands.setup_internal

@@ -4,11 +4,12 @@ Command Methods
 
 import argparse
 from .run import run
-from .setup import setup
+from .setup import setup, setup_internal
 from .pyinfo import pyinfo
 
 __all__ = [
     "run",
+    "setup_internal",
     "build_subparsers"
 ]
 

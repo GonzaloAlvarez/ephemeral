@@ -4,9 +4,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-def setup(ctx):
-    ctx.func.pkg_install(ctx, 'rubyenv')
-    ctx.func.gem_install(ctx, 'ghi')
+import os
 
-def run(ctx):
-    ctx.func.run('{}/ghi {}'.format(ctx.vars.bin_path, " ".join(ctx.vars.vargs)))
+def find_file(search_path, filename):
+    for dirpath, dirnames, filenames in os.walk(search_path):
+        if filename in filenames:
+            return os.path.join(dirpath, filename)
+
+    return None

@@ -4,9 +4,8 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-def setup(ctx):
-    ctx.func.pkg_install(ctx, 'rubyenv')
-    ctx.func.gem_install(ctx, 'ghi')
+import os, sys
 
-def run(ctx):
-    ctx.func.run('{}/ghi {}'.format(ctx.vars.bin_path, " ".join(ctx.vars.vargs)))
+def self_relaunch(py_interpreter):
+    os.execl(py_interpreter, py_interpreter, *sys.argv)
+

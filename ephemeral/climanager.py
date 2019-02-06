@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import argparse
+import copy
 
 from ephemeral.commands import build_subparsers
 from ephemeral.lang import NamedObject
@@ -42,6 +43,18 @@ class SubcommandHelpFormatter(argparse.RawDescriptionHelpFormatter):
             parts = "\n".join(parts.split("\n")[1:])
         return parts
 
+class DictAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        try:
+            k, v = values.split("=", 1)
+        except ValueError:
+            raise argparse.ArgumentError(self, "Format must be key=value")
+
+        # Implementation is from argparse._AppendAction
+        items = copy.copy(argparse._ensure_value(namespace, self.dest, {}))  # Default mutables, use copy!
+        items[k] = v
+        setattr(namespace, self.dest, items)
+
 class CommandLineManager(object):
 
     def __init__(self):
@@ -49,6 +62,7 @@ class CommandLineManager(object):
         self.parser = argparse.ArgumentParser(formatter_class=SubcommandHelpFormatter)
         self.parser.register('action', 'parsers', AliasedSubParsersAction)
         self.parser.add_argument('-v', '--verbose', action='count', default=0)
+        self.parser.add_argument('-c', '--config', action=DictAction)
         subparser = self.parser.add_subparsers(title = 'commands', metavar='<command>')
         build_subparsers(subparser)
 

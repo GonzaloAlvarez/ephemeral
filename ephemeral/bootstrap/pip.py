@@ -13,7 +13,13 @@ def pip_install(context, package, extra_args = None):
         pkg = pkg_resources.get_distribution(package)
     except:
         cout('Installing dependency [{}]'.format(package))
-        run_attributes = [context.config.pip_path, 'install', '-I', '--verbose', package]
+        if context.vars.config and package + '.source' in context.vars.config:
+            package_source = context.vars.config[package + '.source']
+            cout('Installing the package from [{}]'.format(package_source))
+            run_attributes = [context.config.pip_path, 'install', '-I', '--verbose', '-e', package_source]
+            #run_attributes = [context.config.pip_path, 'install', '-I', '--verbose', package, '--no-index', '--find-links', package_source]
+        else:
+            run_attributes = [context.config.pip_path, 'install', '-I', '--verbose', package]
         if extra_args:
             run_attributes = run_attributes + extra_args.split(' ')
         shell.brun(' '.join(run_attributes))

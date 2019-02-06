@@ -47,6 +47,7 @@ def context_bootstrap(context):
     context.vars.bin_path = os.path.realpath(os.path.join(context.epherstore.get_store_path(), 'bin'))
     context.vars.local_path = context.epherstore.get_store_path()
     context.vars.vargs = context.session.cli.args
+    context.vars.config = context.session.cli.config
 
     context.func = NamedObject()
     context.func.pip_install = pip.pip_install

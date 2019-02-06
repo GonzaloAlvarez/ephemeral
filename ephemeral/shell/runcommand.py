@@ -18,7 +18,9 @@ except NameError:
 
 ENV_DEFAULTS = {
     "PYTHONUNBUFFERED": "1",
-    "TERM": "screen-256color"
+    "TERM": "screen-256color",
+    "LC_ALL": "en_US.UTF-8",
+    "LANG": "en_US.UTF-8"
 }
 
 def brun(command, _env={}):
@@ -38,6 +40,8 @@ def brun(command, _env={}):
 
     process = subprocess.Popen(command, **popen_kwargs)
     process_stdout, process_stderr = process.communicate()
+    logging.debug('STDOUT: [{}]'.format(process_stdout))
+    logging.debug('STDERR: [{}]'.format(process_stderr))
     return process_stdout, process_stderr, int(process.returncode)
 
 def run(command, _env={}):

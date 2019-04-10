@@ -17,7 +17,7 @@ requirements = [ ]
 
 setup_requirements = ['pytest-runner', ]
 
-test_requirements = ['pytest', ]
+test_requirements = ['pytest', 'pytest-cov']
 
 class CleanCommand(Clean):
     description = "Remove build directories, and compiled file in the source tree"

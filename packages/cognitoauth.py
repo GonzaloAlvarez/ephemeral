@@ -9,14 +9,14 @@ import os
 CREDENTIALS_FILENAME = 'awscreds.json'
 
 def get_awscreds(ctx):
-    if not os.path.isfile('{}/cognito-auth'.format(ctx.vars.bin_path)):
-        ctx.func.pip_install(ctx, 'cognito-auth')
+    if not os.path.isfile('{}/cognitoauth'.format(ctx.vars.bin_path)):
+        ctx.func.pip_install(ctx, 'cognitoauth')
     credentials_file = os.path.join(ctx.vars.local_path, CREDENTIALS_FILENAME)
-    ctx.func.run('{}/cognito-auth --login --json-output --to-file {}'.format(ctx.vars.bin_path, credentials_file))
+    ctx.func.run('{}/cognitoauth --login --json-output --to-file {}'.format(ctx.vars.bin_path, credentials_file))
 
 def setup(ctx):
-    ctx.func.pip_install(ctx, 'cognito_auth')
+    ctx.func.pip_install(ctx, 'cognitoauth')
     ctx.func.get_awscreds = get_awscreds
 
 def run(ctx):
-    ctx.func.run('{}/cognito-auth {}'.format(ctx.vars.bin_path, " ".join(ctx.vars.vargs)))
+    ctx.func.run('{}/cognitoauth {}'.format(ctx.vars.bin_path, " ".join(ctx.vars.vargs)))

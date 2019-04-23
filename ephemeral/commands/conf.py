@@ -12,8 +12,11 @@ from ephemeral.shell import cout
 def conf(context):
     if context.session.cli.action:
         if context.session.cli.action == 'localoverride':
-            if len(context.session.cli.args) != 2:
+            if len(context.session.cli.args) > 2:
                 logging.error('Wrong number of arguments for "localoverride". Expecting PACKAGE_NAME PATH.')
+            elif len(context.session.cli.args) == 1:
+                package_name = context.session.cli.args[0]
+                context.config.__delattr__(package_name + '.source')
             else:
                 package_name = context.session.cli.args[0]
                 override_path = context.session.cli.args[1]

@@ -13,3 +13,22 @@ except ImportError:
 class NamedObject(Namespace):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
+
+    def __getattr__(self, name):
+        if name in self.__dict__:
+            return self.__dict__[name]
+        return None
+
+    def __setattr__(self, name, value):
+        object.__setattr__(self, name, value)
+
+    def __delattr__(self, name):
+        object.__delattr__(self, name)
+
+    def __getitem__(self, name):
+        return self.__getattr__(name)
+
+    def __contains__(self, item):
+        return item in self.__dict__
+
+

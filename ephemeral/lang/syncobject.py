@@ -37,8 +37,11 @@ class SynchronizedObject(Namespace):
     def __getitem__(self, name):
         return self.__getattr__(name)
 
+    def __contains__(self, item):
+        return item in self.__dict__
+
     def __update(self):
-        if '__path' in self.__dict__ and self['__path'] is not None:
+        if '__path' in self and self['__path'] is not None:
             with tempfile.NamedTemporaryFile('w', dir=os.path.dirname(self['__path']), delete=False) as tf:
                 tf.write(json.dumps(self.__dict__, ensure_ascii=False, sort_keys = True, indent = 4))
                 tempfile_path = tf.name
@@ -52,9 +55,10 @@ class SynchronizedObject(Namespace):
                     return json.loads(f.read(), object_hook = lambda d: SynchronizedObject(**d))
             except Exception as e:
                 raise ValueError('Failed to use file attribute, although it exists', e)
-        elif os.access(os.path.dirname(args[0]), os.W_OK):
+        elif os.access(os.path.dirname(filename), os.W_OK):
             obj = SynchronizedObject()
             object.__setattr__(obj, '__path', filename)
+            return obj
         else:
             raise ValueError('Argument provided is a string but not a path. Aborting')
 

@@ -48,7 +48,7 @@ def run(command, _env={}):
     _environ = os.environ.copy()
     try:
         os.environ.clear()
-        os.environ.update(_env)
+        os.environ.update(_environ)
         os.environ.update(ENV_DEFAULTS)
 
         logging.info('Executing [{}] in the foreground'.format(command))
